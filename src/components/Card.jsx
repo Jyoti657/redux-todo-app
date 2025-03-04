@@ -1,12 +1,17 @@
 import React from "react";
 import { BsTrashFill, BsCheckSquare } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { deleteTodo, toggleInputForm } from "../store/todoSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteTodo,
+  toggleInputForm,
+  toggleSelectedTodo,
+} from "../store/todoSlice";
 import { useState } from "react";
 
 function Card({ id, name, description }) {
   const dispatch = useDispatch();
+  const selectedTodos = useSelector((state) => state.todos.selectedTodos);
   const [done, setDone] = useState(false);
 
   function handleDeleted() {
@@ -20,6 +25,9 @@ function Card({ id, name, description }) {
         description,
       })
     );
+  }
+  function handleSelected() {
+    dispatch(toggleSelectedTodo(id));
   }
   return (
     <div className="w-full bg-red-100 p-6 rounded-xl shadow-lg min-h-[180px] flex flex-col justify-between">
@@ -44,6 +52,14 @@ function Card({ id, name, description }) {
           className="cursor-pointer text-red-800 text-2xl hover:text-red-600 transition duration-200"
           onClick={handleDeleted}
         />
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            checked={selectedTodos.includes(id)}
+            onChange={handleSelected}
+            className="h-5 w-5 accent-black"
+          />
+        </div>
       </div>
     </div>
   );

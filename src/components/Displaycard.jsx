@@ -1,14 +1,18 @@
-
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "./Card";
 import AddTodo from "./AddTodo";
 import UpadateForm from "./UpadateForm";
-import { fetchTodos, deleteTodo } from "../store/todoSlice";
+import {
+  fetchTodos,
+  deleteTodo,
+  deleteMultipleTodos,
+} from "../store/todoSlice";
 
 function Displaycard() {
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todos.todos);
+  const selectedTodos = useSelector((state) => state.todos.selectedTodos);
   const toggleForm = useSelector((state) => state.todos.toggleForm);
 
   useEffect(() => {
@@ -18,13 +22,25 @@ function Displaycard() {
   function handleClear() {
     todos.forEach((todo) => dispatch(deleteTodo(todo.id)));
   }
+  function handleDeleteSelected() {
+    if (selectedTodos.length > 0) {
+      dispatch(deleteMultipleTodos(selectedTodos));
+    }
+  }
 
   return (
     <div className="bg-gradient-to-r from-zinc-500 via-stone-600 to-zinc-900 w-full min-h-screen flex flex-col items-center p-4">
       <h1 className="text-3xl font-bold text-red-500 mt-4 mb-6">My TODOList</h1>
 
       <div className="w-full">{toggleForm ? <AddTodo /> : <UpadateForm />}</div>
-
+      {selectedTodos.length > 0 && (
+        <button
+          onClick={handleDeleteSelected}
+          className="bg-red-500 text-white px-4 py-2 rounded-md m-4"
+        >
+          Delete Selected ({selectedTodos.length})
+        </button>
+      )}
       <div className="w-full p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {todos.length > 0 ? (

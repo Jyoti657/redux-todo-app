@@ -1,15 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// JSON Server URL
 const API_URL = "http://localhost:5000/todos";
 
-// Fetch todos from JSON Server
 export const fetchTodos = createAsyncThunk("todo/fetchTodos", async () => {
   const response = await fetch(API_URL);
   return response.json();
 });
 
-// Add todo to JSON Server
+// Add todo
 export const addTodo = createAsyncThunk("todo/addTodo", async (todo) => {
   const response = await fetch(API_URL, {
     method: "POST",
@@ -19,13 +17,13 @@ export const addTodo = createAsyncThunk("todo/addTodo", async (todo) => {
   return response.json();
 });
 
-// Delete todo from JSON Server
+// Delete todo
 export const deleteTodo = createAsyncThunk("todo/deleteTodo", async (id) => {
   await fetch(`${API_URL}/${id}`, { method: "DELETE" });
   return id;
 });
 
-// Update todo in JSON Server
+// update todo
 export const updateTodo = createAsyncThunk("todo/updateTodo", async (todo) => {
   const response = await fetch(`${API_URL}/${todo.id}`, {
     method: "PUT",
@@ -34,11 +32,22 @@ export const updateTodo = createAsyncThunk("todo/updateTodo", async (todo) => {
   });
   return response.json();
 });
+//deleteMultiple
+export const deleteMultipleTodos = createAsyncThunk(
+  "todo/deleteMultipleTodos",
+  async (ids) => {
+    await Promise.all(
+      ids.map((id) => fetch(`${API_URL}/${id}`, { method: "DELETE" }))
+    );
+    return ids;
+  }
+);
 
 const todoSlice = createSlice({
   name: "todo",
   initialState: {
     todos: [],
+    selectedTodos: [],
     toggleForm: true,
     todoUpdateForm: {},
     status: "idle",
@@ -48,6 +57,16 @@ const todoSlice = createSlice({
     toggleInputForm: (state, action) => {
       state.toggleForm = !state.toggleForm;
       state.todoUpdateForm = action.payload;
+    },
+    toggleSelectedTodo: (state, action) => {
+      const id = action.payload;
+      if (state.selectedTodos.includes(id)) {
+        state.selectedTodos = state.selectedTodos.filter(
+          (todoId) => todoId !== id
+        );
+      } else {
+        state.selectedTodos.push(id);
+      }
     },
   },
   extraReducers: (builder) => {
@@ -65,9 +84,14 @@ const todoSlice = createSlice({
         state.todos = state.todos.map((todo) =>
           todo.id === action.payload.id ? action.payload : todo
         );
+      })
+      .addCase(deleteMultipleTodos.fulfilled, (state, action) => {
+        state.todos = state.todos.map((todo) => {
+          todo.id === action.payload.id ? action.payload : todo;
+        });
       });
   },
 });
 
-export const { toggleInputForm } = todoSlice.actions;
+export const { toggleInputForm, toggleSelectedTodo } = todoSlice.actions;
 export default todoSlice.reducer;
