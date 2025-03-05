@@ -2,44 +2,79 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const API_URL = "http://localhost:5000/todos";
 
-export const fetchTodos = createAsyncThunk("todo/fetchTodos", async () => {
-  const response = await fetch(API_URL);
-  return response.json();
-});
+export const fetchTodos = createAsyncThunk(
+  "todo/fetchTodos",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error("Failed to fetch todos");
 
-// Add todo
-export const addTodo = createAsyncThunk("todo/addTodo", async (todo) => {
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(todo),
-  });
-  return response.json();
-});
+      return await response.json();
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
-// Delete todo
-export const deleteTodo = createAsyncThunk("todo/deleteTodo", async (id) => {
-  await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  return id;
-});
+export const addTodo = createAsyncThunk(
+  "todo/addTodo",
+  async (todo, { rejectWithValue }) => {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(todo),
+      });
+      if (!response.ok) throw new Error("Failed to add todo");
+      return response.json();
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
-// update todo
-export const updateTodo = createAsyncThunk("todo/updateTodo", async (todo) => {
-  const response = await fetch(`${API_URL}/${todo.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(todo),
-  });
-  return response.json();
-});
-//deleteMultiple
+export const deleteTodo = createAsyncThunk(
+  "todo/deleteTodo",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      if (!response.ok) throw Error("Failed to delete todo");
+      return id;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateTodo = createAsyncThunk(
+  "todo/updateTodo",
+  async (todo, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/${todo.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(todo),
+      });
+      if (!response.ok) throw new Error("Failed to update todo");
+      return response.json();
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const deleteMultipleTodos = createAsyncThunk(
   "todo/deleteMultipleTodos",
-  async (ids) => {
-    await Promise.all(
-      ids.map((id) => fetch(`${API_URL}/${id}`, { method: "DELETE" }))
-    );
-    return ids;
+  async (ids, { rejectWithValue }) => {
+    try {
+      const response = await Promise.all(
+        ids.map((id) => fetch(`${API_URL}/${id}`, { method: "DELETE" }))
+      );
+      if (!response.ok) throw new Error("Failed to multiple delete");
+      return ids;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
 );
 
@@ -85,10 +120,12 @@ const todoSlice = createSlice({
           todo.id === action.payload.id ? action.payload : todo
         );
       })
+
       .addCase(deleteMultipleTodos.fulfilled, (state, action) => {
-        state.todos = state.todos.map((todo) => {
-          todo.id === action.payload.id ? action.payload : todo;
-        });
+        state.todos = state.todos.filter(
+          (todo) => !action.payload.includes(todo.id)
+        );
+        state.selectedTodos = [];
       });
   },
 });

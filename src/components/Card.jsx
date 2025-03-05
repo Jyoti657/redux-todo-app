@@ -14,10 +14,11 @@ function Card({ id, name, description }) {
   const selectedTodos = useSelector((state) => state.todos.selectedTodos);
   const [done, setDone] = useState(false);
 
-  function handleDeleted() {
+  const deleteTodoHandler = () => {
     dispatch(deleteTodo(id));
-  }
-  function handleUpdate() {
+  };
+  const updateTodoHandler = () => {
+    if (done) return;
     dispatch(
       toggleInputForm({
         id,
@@ -25,12 +26,12 @@ function Card({ id, name, description }) {
         description,
       })
     );
-  }
-  function handleSelected() {
+  };
+  const selectTodoHandler = () => {
     dispatch(toggleSelectedTodo(id));
-  }
+  };
   return (
-    <div className="w-full bg-red-100 p-6 rounded-xl shadow-lg min-h-[180px] flex flex-col justify-between">
+    <div className="w-full bg-customBlue p-6 rounded-xl shadow-lg min-h-[180px] flex flex-col justify-between">
       <div>
         <h1 className={done ? "font-semibold line-through" : "font-semibold"}>
           {name}
@@ -45,18 +46,20 @@ function Card({ id, name, description }) {
           onClick={() => setDone(!done)}
         />
         <FaEdit
-          className="cursor-pointer text-yellow-700 text-2xl hover:text-yellow-500 transition duration-200"
-          onClick={handleUpdate}
+          className={`cursor-pointer text-yellow-700 text-2xl hover:text-yellow-500 transition duration-200 ${
+            done ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={updateTodoHandler}
         />
         <BsTrashFill
           className="cursor-pointer text-red-800 text-2xl hover:text-red-600 transition duration-200"
-          onClick={handleDeleted}
+          onClick={deleteTodoHandler}
         />
         <div className="flex items-center gap-3">
           <input
             type="checkbox"
             checked={selectedTodos.includes(id)}
-            onChange={handleSelected}
+            onChange={selectTodoHandler}
             className="h-5 w-5 accent-black"
           />
         </div>

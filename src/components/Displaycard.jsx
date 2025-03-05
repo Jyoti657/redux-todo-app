@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "./Card";
 import AddTodo from "./AddTodo";
-import UpadateForm from "./UpadateForm";
+import UpdateForm from "./UpdateForm";
+
 import {
   fetchTodos,
   deleteTodo,
@@ -11,52 +12,74 @@ import {
 
 function Displaycard() {
   const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos.todos);
+  const data = useSelector((state) => state.todos.todos);
   const selectedTodos = useSelector((state) => state.todos.selectedTodos);
-  const toggleForm = useSelector((state) => state.todos.toggleForm);
+  const isEditFormOpen = useSelector((state) => state.todos.toggleForm);
+  const [showMessage, setShowMessage] = useState(false);
+  const [countDeleted, setCountDeleted] = useState(0);
 
   useEffect(() => {
     dispatch(fetchTodos());
   }, [dispatch]);
 
-  function handleClear() {
-    todos.forEach((todo) => dispatch(deleteTodo(todo.id)));
-  }
-  function handleDeleteSelected() {
+  const clearAllTodo = () => {
+    Promise.all(data.map((todo) => dispatch(deleteTodo(todo.id))));
+  };
+
+  async function deleteSelectedTodos() {
     if (selectedTodos.length > 0) {
-      dispatch(deleteMultipleTodos(selectedTodos));
+      try {
+        await dispatch(deleteMultipleTodos(selectedTodos));
+        setCountDeleted(selectedTodos.length);
+        setShowMessage(true);
+
+        setTimeout(() => {
+          setShowMessage(false);
+          dispatch(fetchTodos());
+        }, 1000);
+      } catch (error) {
+        console.error("Failed to delete todos:", error);
+        alert("An error occurred while deleting todos. Please try again.");
+      }
     }
   }
 
   return (
-    <div className="bg-gradient-to-r from-zinc-500 via-stone-600 to-zinc-900 w-full min-h-screen flex flex-col items-center p-4">
-      <h1 className="text-3xl font-bold text-red-500 mt-4 mb-6">My TODOList</h1>
+    <div className="bg-lightSlateGray  w-full min-h-screen flex flex-col items-center p-4">
+      <h1 className="text-3xl font-bold text-red-500 mt-4 mb-6">My TODOLIST</h1>
 
-      <div className="w-full">{toggleForm ? <AddTodo /> : <UpadateForm />}</div>
+      <div className="w-full">
+        {isEditFormOpen ? <AddTodo /> : <UpdateForm />}
+      </div>
       {selectedTodos.length > 0 && (
         <button
-          onClick={handleDeleteSelected}
+          onClick={deleteSelectedTodos}
           className="bg-red-500 text-white px-4 py-2 rounded-md m-4"
         >
-          Delete Selected ({selectedTodos.length})
+          Delete Selected
         </button>
       )}
+      {showMessage && (
+        <p className="text-green-500 font-semibold mt-2">
+          {countDeleted} todo{countDeleted > 1 ? "s" : ""} deleted successfully
+        </p>
+      )}
+      <button
+        onClick={clearAllTodo}
+        className="w-full sm:w-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 mt-8 px-6 rounded-md focus:outline-none transition duration-200"
+      >
+        Clear
+      </button>
       <div className="w-full p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {todos.length > 0 ? (
-            todos.map((item) => <Card key={item.id} {...item} />)
+          {data.length > 0 ? (
+            data.map((item) => <Card key={item.id} {...item} />)
           ) : (
             <p className="text-center text-gray-500 col-span-full">
               No todos added yet.
             </p>
           )}
         </div>
-        <button
-          onClick={handleClear}
-          className="w-full sm:w-auto bg-red-500 hover:bg-red-700 text-white font-bold py-2 mt-8 px-6 rounded-md focus:outline-none transition duration-200"
-        >
-          Clear
-        </button>
       </div>
     </div>
   );
