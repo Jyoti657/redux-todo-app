@@ -1,4 +1,3 @@
-import React from "react";
 import { BsTrashFill, BsCheckSquare } from "react-icons/bs";
 import { FaEdit } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +10,7 @@ import { useState } from "react";
 
 function Card({ id, name, description }) {
   const dispatch = useDispatch();
-  const selectedTodos = useSelector((state) => state.todos.selectedTodos);
+  const selectedTodos = useSelector((state) => state.todosData.selectedTodos);
   const [done, setDone] = useState(false);
 
   const deleteTodoHandler = () => {
@@ -31,8 +30,8 @@ function Card({ id, name, description }) {
     dispatch(toggleSelectedTodo(id));
   };
   return (
-    <div className="w-full bg-customBlue p-6 rounded-xl shadow-lg min-h-[180px] flex flex-col justify-between">
-      <div>
+    <div className="w-full bg-customBlue p-6 rounded-xl shadow-lg min-h-[180px]  flex flex-col justify-between">
+      <div className="overflow-hidden flex-grow">
         <h1 className={done ? "font-semibold line-through" : "font-semibold"}>
           {name}
         </h1>

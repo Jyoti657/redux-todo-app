@@ -1,14 +1,3 @@
 {
-  "todos": [
-    {
-      "id": "2ce6",
-      "name": "react",
-      "description": "Hook,useForm, componets"
-    },
-    {
-      "id": "fbde",
-      "name": "javascript",
-      "description": "promise, callback function"
-    }
-  ]
+  "todos": []
 }

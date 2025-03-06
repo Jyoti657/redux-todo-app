@@ -103,6 +103,9 @@ const todoSlice = createSlice({
         state.selectedTodos.push(id);
       }
     },
+    clearSelectedTodos: (state) => {
+      state.selectedTodos = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -130,5 +133,6 @@ const todoSlice = createSlice({
   },
 });
 
-export const { toggleInputForm, toggleSelectedTodo } = todoSlice.actions;
+export const { toggleInputForm, toggleSelectedTodo, clearSelectedTodos } =
+  todoSlice.actions;
 export default todoSlice.reducer;
