@@ -14,7 +14,7 @@ function Displaycard() {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.todosData.todos);
   const selectedTodos = useSelector((state) => state.todosData.selectedTodos);
-  const isEditFormOpen = useSelector((state) => state.todosData.toggleForm);
+  const isCreateOrEditMode = useSelector((state) => state.todosData.toggleForm);
   const [showMessage, setShowMessage] = useState(false);
   const [countDeleted, setCountDeleted] = useState(0);
 
@@ -53,7 +53,7 @@ function Displaycard() {
       </header>
 
       <div className="w-full max-w-2xl bg-white/10 backdrop-blur-md p-6 rounded-lg shadow-lg">
-        {isEditFormOpen ? <AddTodo /> : <UpdateForm />}
+        {isCreateOrEditMode ? <AddTodo /> : <UpdateForm />}
       </div>
 
       <div className="flex flex-wrap gap-4 justify-center mt-6">

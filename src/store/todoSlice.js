@@ -68,7 +68,15 @@ export const deleteMultipleTodos = createAsyncThunk(
   async (ids, { rejectWithValue }) => {
     try {
       const response = await Promise.all(
-        ids.map((id) => fetch(`${API_URL}/${id}`, { method: "DELETE" }))
+        ids.map((id) =>
+          fetch(`${API_URL}/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "appliactions/json",
+            },
+            body: JSON.stringify({ ids }),
+          })
+        )
       );
       if (!response.ok) throw new Error("Failed to multiple delete");
       return ids;
