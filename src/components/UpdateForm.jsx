@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateTodo, toggleInputForm } from "../store/todoSlice";
 import TodoForm from "./TodoForm";

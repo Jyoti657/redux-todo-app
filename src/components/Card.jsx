@@ -16,6 +16,7 @@ function Card({ id, name, description }) {
   const deleteTodoHandler = () => {
     dispatch(deleteTodo(id));
   };
+
   const updateTodoHandler = () => {
     if (done) return;
     dispatch(
@@ -29,6 +30,7 @@ function Card({ id, name, description }) {
   const selectTodoHandler = () => {
     dispatch(toggleSelectedTodo(id));
   };
+
   return (
     <div className="w-full bg-customBlue p-6 rounded-xl shadow-lg min-h-[180px]  flex flex-col justify-between">
       <div className="overflow-hidden flex-grow">
