@@ -4,7 +4,7 @@ const API_URL = "http://localhost:5000/todos";
 
 export const fetchTodos = createAsyncThunk(
   "todo/fetchTodos",
-  async (_, { rejectWithValue }) => {
+  async ({ rejectWithValue }) => {
     try {
       const response = await fetch(API_URL);
       if (!response.ok) throw new Error("Failed to fetch todos");
