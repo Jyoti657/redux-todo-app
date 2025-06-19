@@ -67,12 +67,12 @@ export const deleteMultipleTodos = createAsyncThunk(
   "todo/deleteMultipleTodos",
   async (ids, { rejectWithValue }) => {
     try {
-      const response = await Promise.all(
+      const response = await Promise(
         ids.map((id) =>
           fetch(`${API_URL}/${id}`, {
             method: "DELETE",
             headers: {
-              "Content-Type": "appliactions/json",
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ ids }),
           })
@@ -107,7 +107,7 @@ const todoSlice = createSlice({
         state.selectedTodos = state.selectedTodos.filter(
           (todoId) => todoId !== id
         );
-      } else {
+      } else {  
         state.selectedTodos.push(id);
       }
     },

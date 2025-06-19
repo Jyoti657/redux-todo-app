@@ -32,40 +32,49 @@ function Card({ id, name, description }) {
   };
 
   return (
-    <div className="w-full bg-customBlue p-6 rounded-xl shadow-lg min-h-[180px]  flex flex-col justify-between">
-      <div className="overflow-hidden flex-grow">
-        <h1 className={done ? "font-semibold line-through" : "font-semibold"}>
-          {name}
-        </h1>
-        <h2 className={done ? "font-semibold line-through" : "font-semibold"}>
-          {description}
-        </h2>
-      </div>
-      <div className="flex justify-center sm:justify-end space-x-5 mt-4">
-        <BsCheckSquare
-          className="cursor-pointer text-green-700 text-2xl hover:text-green-500 transition duration-200"
-          onClick={() => setDone(!done)}
+  
+    
+    <div
+    className="w-full bg-gradient-to-br from-sky-100 to-blue-200 p-6 rounded-2xl shadow-xl 
+               transition-transform duration-300 ease-in-out transform hover:scale-105 
+               hover:shadow-2xl min-h-[180px] flex flex-col justify-between animate-fade-in"
+  >
+    <div className="overflow-hidden flex-grow">
+      <h1 className={`text-xl font-semibold text-gray-800 ${done ? "line-through text-gray-400" : ""}`}>
+        {name}
+      </h1>
+      <h2 className={`mt-2 text-md font-medium text-gray-700 ${done ? "line-through text-gray-400" : ""}`}>
+        {description}
+      </h2>
+    </div>
+
+    <div className="flex justify-center sm:justify-end space-x-5 mt-6">
+      <BsCheckSquare
+        title="Mark as Done"
+        className="cursor-pointer text-green-700 text-2xl hover:text-green-500 hover:scale-110 transition duration-200 ease-in-out"
+        onClick={() => setDone(!done)}
+      />
+      <FaEdit
+        title="Edit Todo"
+        className={`text-yellow-700 text-2xl hover:text-yellow-500 hover:scale-110 transition duration-200 ease-in-out 
+          ${done ? "opacity-50 cursor-not-allowed hover:scale-100" : "cursor-pointer"}`}
+        onClick={updateTodoHandler}
+      />
+      <BsTrashFill
+        title="Delete Todo"
+        className="cursor-pointer text-red-700 text-2xl hover:text-red-500 hover:scale-110 transition duration-200 ease-in-out"
+        onClick={deleteTodoHandler}
+      />
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={selectedTodos.includes(id)}
+          onChange={selectTodoHandler}
+          className="h-5 w-5 accent-blue-700 cursor-pointer"
         />
-        <FaEdit
-          className={`cursor-pointer text-yellow-700 text-2xl hover:text-yellow-500 transition duration-200 ${
-            done ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          onClick={updateTodoHandler}
-        />
-        <BsTrashFill
-          className="cursor-pointer text-red-800 text-2xl hover:text-red-600 transition duration-200"
-          onClick={deleteTodoHandler}
-        />
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            checked={selectedTodos.includes(id)}
-            onChange={selectTodoHandler}
-            className="h-5 w-5 accent-black"
-          />
-        </div>
       </div>
     </div>
+  </div>
   );
 }
 
